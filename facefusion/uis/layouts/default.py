@@ -1,7 +1,8 @@
 import gradio
 
 from facefusion import state_manager
-from facefusion.uis.components import about, age_modifier_options, common_options, deep_swapper_options, download, execution, execution_queue_count, execution_thread_count, expression_restorer_options, face_debugger_options, face_detector, face_editor_options, face_enhancer_options, face_landmarker, face_masker, face_selector, face_swapper_options, frame_colorizer_options, frame_enhancer_options, instant_runner, job_manager, job_runner, lip_syncer_options, memory, output, output_options, preview, processors, source, target, temp_frame, terminal, trim_frame, ui_workflow
+from facefusion.uis.components import about, age_modifier_options, api_info, common_options, deep_swapper_options, download, execution, execution_queue_count, execution_thread_count, expression_restorer_options, face_debugger_options, face_detector, face_editor_options, face_enhancer_options, face_landmarker, face_masker, face_selector, face_swapper_options, frame_colorizer_options, frame_enhancer_options, instant_runner, job_manager, job_runner, lip_syncer_options, memory, output, output_options, preview, processors, source, target, temp_frame, terminal, trim_frame, ui_workflow
+from facefusion.uis.layouts.api_config import get_api_launch_config
 
 
 def pre_check() -> bool:
@@ -10,6 +11,12 @@ def pre_check() -> bool:
 
 def render() -> gradio.Blocks:
 	with gradio.Blocks() as layout:
+		# API Information at the top
+		with gradio.Row():
+			with gradio.Column():
+				with gradio.Blocks():
+					api_info.render()
+		
 		with gradio.Row():
 			with gradio.Column(scale = 4):
 				with gradio.Blocks():
@@ -81,6 +88,7 @@ def render() -> gradio.Blocks:
 
 
 def listen() -> None:
+	api_info.listen()
 	processors.listen()
 	age_modifier_options.listen()
 	deep_swapper_options.listen()
@@ -116,4 +124,15 @@ def listen() -> None:
 
 
 def run(ui : gradio.Blocks) -> None:
-	ui.launch(favicon_path = 'facefusion.ico', inbrowser = state_manager.get_item('open_browser'))
+	# Get API configuration
+	api_config = get_api_launch_config()
+	
+	# Merge with existing configuration
+	launch_config = {
+		'favicon_path': 'facefusion.ico',
+		'inbrowser': state_manager.get_item('open_browser'),
+		**api_config
+	}
+	
+	# Launch with API access enabled
+	ui.launch(**launch_config)
