@@ -135,4 +135,15 @@ def run(ui : gradio.Blocks) -> None:
 	}
 	
 	# Launch with API access enabled
-	ui.queue().launch(**launch_config)
+	# Disable SSR for better API compatibility
+	launch_config['ssr_mode'] = False
+	
+	# Configure queue with proper session handling
+	ui = ui.queue(
+		max_size=10,
+		api_open=True,
+		default_concurrency_limit=1
+	)
+	
+	# Launch with session handling
+	ui.launch(**launch_config)
