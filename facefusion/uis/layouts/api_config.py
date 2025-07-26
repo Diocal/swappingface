@@ -26,7 +26,6 @@ int(os.getenv('GRADIO_SERVER_PORT', 7860)),
 
           # Additional settings
           'max_threads': 40,
-          'enable_queue': True,
 
           # For Hugging Face Spaces
           'root_path': os.getenv('GRADIO_ROOT_PATH',     
