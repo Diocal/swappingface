@@ -135,4 +135,4 @@ def run(ui : gradio.Blocks) -> None:
 	}
 	
 	# Launch with API access enabled
-	ui.launch(**launch_config)
+	ui.queue().launch(**launch_config)
