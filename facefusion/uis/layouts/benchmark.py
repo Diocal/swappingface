@@ -3,6 +3,7 @@ import gradio
 from facefusion import state_manager
 from facefusion.benchmarker import pre_check as benchmarker_pre_check
 from facefusion.uis.components import about, age_modifier_options, benchmark, benchmark_options, deep_swapper_options, download, execution, execution_queue_count, execution_thread_count, expression_restorer_options, face_debugger_options, face_editor_options, face_enhancer_options, face_swapper_options, frame_colorizer_options, frame_enhancer_options, lip_syncer_options, memory, processors
+from facefusion.uis.layouts.api_config import get_api_launch_config
 
 
 def pre_check() -> bool:
@@ -75,4 +76,15 @@ def listen() -> None:
 
 
 def run(ui : gradio.Blocks) -> None:
-	ui.launch(favicon_path = 'facefusion.ico', inbrowser = state_manager.get_item('open_browser'))
+	# Get API configuration
+	api_config = get_api_launch_config()
+	
+	# Merge with existing configuration
+	launch_config = {
+		'favicon_path': 'facefusion.ico',
+		'inbrowser': state_manager.get_item('open_browser'),
+		**api_config
+	}
+	
+	# Launch with API access enabled
+	ui.launch(**launch_config)
