@@ -17,6 +17,22 @@ def render() -> gradio.Blocks:
 				with gradio.Blocks():
 					api_info.render()
 		
+		# Add API test endpoint
+		with gradio.Row(visible=False):
+			api_test_input = gradio.Textbox(label="API Test Input", visible=False)
+			api_test_output = gradio.JSON(label="API Test Output", visible=False)
+			api_test_button = gradio.Button("Test API", visible=False, elem_id="api_test_button")
+			
+			def api_test_fn(input_text):
+				return {"status": "success", "message": "API is working", "input": input_text}
+			
+			api_test_button.click(
+				fn=api_test_fn,
+				inputs=[api_test_input],
+				outputs=[api_test_output],
+				api_name="test"  # This creates the API endpoint
+			)
+		
 		with gradio.Row():
 			with gradio.Column(scale = 4):
 				with gradio.Blocks():
@@ -139,10 +155,7 @@ def run(ui : gradio.Blocks) -> None:
 	launch_config['ssr_mode'] = False
 	
 	# Configure queue with proper session handling
-	ui = ui.queue(
-		max_size=10,
-		api_open=True
-	)
+	ui = ui.queue(max_size=10)
 	
 	# Launch with session handling
 	ui.launch(**launch_config)
