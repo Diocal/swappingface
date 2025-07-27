@@ -141,8 +141,7 @@ def run(ui : gradio.Blocks) -> None:
 	# Configure queue with proper session handling
 	ui = ui.queue(
 		max_size=10,
-		api_open=True,
-		default_concurrency_limit=1
+		api_open=True
 	)
 	
 	# Launch with session handling
